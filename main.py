@@ -10,9 +10,10 @@ from forms import CreatePostForm, RegisterForm, LoginForm, CommentForm
 from flask_gravatar import Gravatar
 from functools import wraps
 import smtplib
-bot_email = ""
-bot_password = ""
-user_email = ""
+import os
+bot_email = os.environ['bot_email']
+bot_password = os.environ['bot_password']
+user_email = os.environ['user_email']
 app = Flask(__name__)
 app.config['SECRET_KEY'] = '8BYkEfBA6O6donzWlSihBXox7C0sKR6b'
 ckeditor = CKEditor(app)
@@ -194,7 +195,7 @@ def contact():
             connection.sendmail(from_addr=bot_email, to_addrs=user_email,
                                 msg=f"Subject: NEW USER\n\n\nNAME: {name}\nEMAIL: {new_email}\n"
                                     f"TEL: {tel}\nMessage: {msg}")
-        return render_template('msg.html')
+        return render_template('msg.html', logged_in=current_user.is_authenticated)
     return render_template("contact.html", logged_in=current_user.is_authenticated)
 
 
