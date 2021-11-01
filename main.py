@@ -11,6 +11,7 @@ from flask_gravatar import Gravatar
 from functools import wraps
 import smtplib
 import os
+
 bot_email = os.environ.get('bot_email')
 bot_password = os.environ.get('bot_password')
 user_email = os.environ.get('user_email')
@@ -32,7 +33,7 @@ gravatar = Gravatar(app,
 
 
 # CONNECT TO DB
-app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get("DATABASE_URL", "sqlite:///blog.db")
+app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get("DATABASE_URL") or "sqlite:///blog.db"
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 
@@ -195,6 +196,7 @@ def contact():
             connection.sendmail(from_addr=bot_email, to_addrs=user_email,
                                 msg=f"Subject: NEW USER\n\n\nNAME: {name}\nEMAIL: {new_email}\n"
                                     f"TEL: {tel}\nMessage: {msg}")
+
         return render_template('msg.html', logged_in=current_user.is_authenticated)
     return render_template("contact.html", logged_in=current_user.is_authenticated)
 
