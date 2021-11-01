@@ -11,11 +11,11 @@ from flask_gravatar import Gravatar
 from functools import wraps
 import smtplib
 import os
-# bot_email = os.environ['bot_email']
-# bot_password = os.environ['bot_password']
-# user_email = os.environ['user_email']
+bot_email = os.environ.get('bot_email')
+bot_password = os.environ.get('bot_password')
+user_email = os.environ.get('user_email')
 app = Flask(__name__)
-app.config['SECRET_KEY'] = '8BYkEfBA6O6donzWlSihBXox7C0sKR6b'
+app.config['SECRET_KEY'] = os.environ.get("SECRET_KEY")
 ckeditor = CKEditor(app)
 Bootstrap(app)
 
@@ -32,7 +32,7 @@ gravatar = Gravatar(app,
 
 
 # CONNECT TO DB
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///blog.db'
+app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get("DATABASE_URL", "sqlite:///blog.db")
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 
@@ -184,18 +184,18 @@ def about():
 
 @app.route("/contact", methods=['POST', 'GET'])
 def contact():
-    # if request.method == 'POST':
-    #     new_email = request.form.get('user_email')
-    #     tel = request.form.get('user_tel')
-    #     msg = request.form.get('user_msg')
-    #     name = request.form.get('user_name')
-    #     with smtplib.SMTP('smtp.gmail.com', 587) as connection:
-    #         connection.starttls()
-    #         connection.login(user=bot_email, password=bot_password)
-    #         connection.sendmail(from_addr=bot_email, to_addrs=user_email,
-    #                             msg=f"Subject: NEW USER\n\n\nNAME: {name}\nEMAIL: {new_email}\n"
-    #                                 f"TEL: {tel}\nMessage: {msg}")
-    #     return render_template('msg.html', logged_in=current_user.is_authenticated)
+    if request.method == 'POST':
+        new_email = request.form.get('user_email')
+        tel = request.form.get('user_tel')
+        msg = request.form.get('user_msg')
+        name = request.form.get('user_name')
+        with smtplib.SMTP('smtp.gmail.com', 587) as connection:
+            connection.starttls()
+            connection.login(user=bot_email, password=bot_password)
+            connection.sendmail(from_addr=bot_email, to_addrs=user_email,
+                                msg=f"Subject: NEW USER\n\n\nNAME: {name}\nEMAIL: {new_email}\n"
+                                    f"TEL: {tel}\nMessage: {msg}")
+        return render_template('msg.html', logged_in=current_user.is_authenticated)
     return render_template("contact.html", logged_in=current_user.is_authenticated)
 
 
