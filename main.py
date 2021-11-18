@@ -190,7 +190,7 @@ def contact():
         tel = request.form.get('user_tel')
         msg = request.form.get('user_msg')
         name = request.form.get('user_name')
-        with smtplib.SMTP('smtp.gmail.com', 587) as connection:
+        with smtplib.SMTP('smtp.gmail.com') as connection:
             connection.starttls()
             connection.login(user=bot_email, password=bot_password)
             connection.sendmail(from_addr=bot_email, to_addrs=user_email,
